@@ -1,4 +1,4 @@
-import { Message, SendMessageOption } from "../telegram";
+import { Message } from "../telegram";
 
 interface IPayload {
   message?: Message;
@@ -15,8 +15,15 @@ export default {
         const name = payload.message.chat.first_name;
         const text = payload.message.text;
 
-        const msg = `Hello ${name}, \nMessage: ${text} \n\nHave a great day 😎`;
-        const data = { chat_id: chatId, text: msg };
+        const msg = `${text} \n\nPeace out!`;
+
+        const data = {
+          chat_id: chatId,
+          text: msg,
+          reply_markup: {
+            inline_keyboard: [[{ text: "Hello", callback_data: "Hello" }]],
+          },
+        };
 
         await send(bot, data);
       }
