@@ -28,11 +28,10 @@ export default {
 const send = async (botKey: string, data: any) => {
   const options = {
     method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ data }),
+    headers: {
+      "content-type": "application/json;charset=UTF-8",
+    },
   };
 
   const url = `https://api.telegram.org/bot${botKey}/sendMessage`;
