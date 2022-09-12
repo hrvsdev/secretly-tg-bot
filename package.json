@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev"
   },
@@ -17,6 +18,7 @@
     "wrangler": "^2.0.29"
   },
   "dependencies": {
+    "firebase": "^9.9.4",
     "node-telegram-bot-api": "^0.59.0"
   }
 }
