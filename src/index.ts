@@ -19,7 +19,7 @@ export default {
 
         const msg = `Hello ${name}, \nMessage: ${text} \n\nHave a great day 😎`;
 
-        const url = `https://api.telegram.org/bot${bot}/sendMessage?chat_id=${chatId}&text=${text}`;
+        const url = `https://api.telegram.org/bot${bot}/sendMessage?chat_id=${chatId}&text=${msg}`;
 
         await fetch(url).then((resp) => resp.json());
       }
