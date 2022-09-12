@@ -16,7 +16,7 @@ export default {
         const text = payload.message.text;
 
         const msg = `Hello ${name}, \nMessage: ${text} \n\nHave a great day 😎`;
-        const data = { chat_id: chatId, text };
+        const data = { chat_id: chatId, text: msg };
 
         await send(bot, data);
       }
