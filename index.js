@@ -24,60 +24,58 @@ bot.on("message", async (msg) => {
     const messageId = query.message.message_id;
 
     // Answering the query according to query option he chose
-    bot.answerCallbackQuery(query.id);
+    bot.answerCallbackQuery(query.id).then(async () => {
+      // If the option is 'text' or 'redirect'
+      if (type === "text" || type === "redirect") {
+        // Getting document and its id to save data
+        const doc = getDocRef();
+        const docId = doc.id;
 
-    // If the option is 'text' or 'redirect'
-    if (type === "text" || type === "redirect") {
-      // Getting document and its id to save data
-      const doc = getDocRef();
-      const docId = doc.id;
+        // Generating a random key to encrypt
+        const key = genKey();
 
-      // Generating a random key to encrypt
-      const key = genKey();
+        console.log({ key });
 
-      // Link of the secret
-      const link = `Your secret link:\nhttps://st.hrvs.me/${docId}#${key}`;
+        // Link of the secret
+        const link = `Your secret link:\nhttps://st.hrvs.me/${docId}#${key}`;
 
-      // Editing the original message to avoid clutter and duplicate clicking
-      bot.editMessageText(link, { chat_id: chatId, message_id: messageId });
+        // Editing the original message to avoid clutter and duplicate clicking
+        bot.editMessageText(link, getEditMsgOptions(chatId, messageId));
 
-      // Saving the secret to database
-      await saveSecret(getData(text, key, type), doc);
-      return;
-    }
-
-    // If the option is redirect
-    if (type === "decrypt") {
-      // Getting id and hash from link
-      const { id, hash } = getIdandHash(text);
-
-      // Getting secret with id
-      const res = await getSecret(id);
-
-      // Checking if document exists without any error
-      if (res.success && res.data) {
-        // Decrypting data by hash
-        const data = decrypt(res.data, hash);
-
-        // Checking if decrypting is successful
-        if (data) {
-          bot.editMessageText(data.secret, {
-            chat_id: chatId,
-            message_id: messageId,
-          });
-        } else {
-          bot.editMessageText("Your key is invalid", {
-            chat_id: chatId,
-            message_id: messageId,
-          });
-        }
-      } else {
-        bot.editMessageText("Secret is revealed before!", {
-          chat_id: chatId,
-          message_id: messageId,
-        });
+        // Saving the secret to database
+        await saveSecret(getData(text, key, type), doc);
+        return;
       }
-    }
+
+      // If the option is redirect
+      if (type === "decrypt") {
+        // Getting id and hash from link
+        const { id, hash } = getIdandHash(text);
+
+        console.log({ hash });
+
+        // Getting secret with id
+        const res = await getSecret(id);
+
+        // Checking if document exists without any error
+        if (res.success && res.data) {
+          // Decrypting data by hash
+          const data = decrypt(res.data.data, hash);
+
+          // Checking if decrypting is successful
+          if (data) {
+            const secret = data.secret;
+            bot.editMessageText(secret, getEditMsgOptions(chatId, messageId));
+          } else {
+            const text = "Your key is invalid";
+            bot.editMessageText(text, getEditMsgOptions(chatId, messageId));
+          }
+        } else {
+          const text = "Secret has been revealed before!";
+          bot.editMessageText(text, getEditMsgOptions(chatId, messageId));
+        }
+      }
+    });
   });
 });
 
@@ -94,6 +92,15 @@ const getReplyOptions = (arr) => {
         [{ text: "Decrypt it", callback_data: "decrypt" }],
       ],
     },
+  };
+};
+
+const getEditMsgOptions = (chatId, messageId) => {
+  return {
+    chat_id: chatId,
+    message_id: messageId,
+    parse_mode: "Markdown",
+    disable_web_page_preview: true,
   };
 };
 
