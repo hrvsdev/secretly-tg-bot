@@ -13,14 +13,17 @@ const encrypt = (data, key) => {
 };
 
 const decrypt = (ciphertext, key) => {
-  console.log({ciphertext, key})
-  const bytes = AES.decrypt(ciphertext, key);
-  const str = bytes.toString(enc.Utf8);
-  return str ? JSON.parse(str) : null;
+  try {
+    const bytes = AES.decrypt(ciphertext, key);
+    const str = bytes.toString(enc.Utf8);
+    return str ? JSON.parse(str) : null;
+  } catch (error) {
+    console.log(error)
+    return null
+  }
 };
 
 const getIdandHash = (url) => {
-  console.log({url})
   const u = new URL(url);
   const id = u.pathname.substring(1);
   const hash = u.hash.substring(1);

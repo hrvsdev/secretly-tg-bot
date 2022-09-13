@@ -24,7 +24,7 @@ bot.on("message", async (msg) => {
     const messageId = query.message.message_id;
 
     // Answering the query according to query option he chose
-    bot.answerCallbackQuery(query.id).then(async () => {
+    bot.answerCallbackQuery(query.id, { show_alert: true }).then(async () => {
       // If the option is 'text' or 'redirect'
       if (type === "text" || type === "redirect") {
         // Getting document and its id to save data
@@ -33,8 +33,6 @@ bot.on("message", async (msg) => {
 
         // Generating a random key to encrypt
         const key = genKey();
-
-        console.log({ key });
 
         // Link of the secret
         const link = `Your secret link:\nhttps://st.hrvs.me/${docId}#${key}`;
@@ -51,8 +49,6 @@ bot.on("message", async (msg) => {
       if (type === "decrypt") {
         // Getting id and hash from link
         const { id, hash } = getIdandHash(text);
-
-        console.log({ hash });
 
         // Getting secret with id
         const res = await getSecret(id);
