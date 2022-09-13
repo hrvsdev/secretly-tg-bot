@@ -16,7 +16,7 @@ bot.on("message", async (msg) => {
 
   const link = `st.hrvs.me/${docId}#${key}`;
 
-  bot.sendMessage(chatId, link);
+  bot.sendMessage(chatId, link, { disable_web_page_preview: true });
 
   const data = getData(text, key);
 
@@ -29,7 +29,9 @@ const getData = (secret, key) => {
   const data = {
     secret: secret,
     isEncryptedWithPassword: false,
-    readReceiptEmail: ""
+    readReceiptEmail: "",
   };
   return encrypt(data, key);
 };
+
+const getHash = (url) => url.split("#")[1];
