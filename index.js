@@ -15,14 +15,15 @@ bot.on("message", async (msg) => {
   const reply = `*Recived your text:* \n${text} \n\nChoose one of the options:`;
 
   // Sending reply with inline options for what to do
-  bot.sendMessage(chatId, reply, getReplyOptions());
+  bot.sendMessage(chatId, reply, getReplyOptions(text));
 });
 
 // Listening for user callback of option he clicked
 bot.on("callback_query", async (query) => {
   // Query data
   const chatId = query.from.id;
-  const type = query.data;
+  const msg = JSON.parse(query.data).msg;
+  const type = JSON.parse(query.data).type;
   const msgId = query.message.message_id;
 
   // Answering the query according to query option he chose
@@ -44,14 +45,14 @@ bot.on("callback_query", async (query) => {
     bot.editMessageText(link, getEditMsgOptions(chatId, msgId));
 
     // Saving the secret to database
-    await saveSecret(getData(text, key, type), doc);
+    await saveSecret(getData(msg, key, type), doc);
     return;
   }
 
   // If the option is redirect
   if (type === "decrypt") {
     // Getting id and hash from link
-    const { id, hash } = getIdandHash(text);
+    const { id, hash } = getIdandHash(msg);
 
     // Getting secret with id
     const res = await getSecret(id);
@@ -75,7 +76,6 @@ bot.on("callback_query", async (query) => {
     }
   }
 });
-
 
 const getEditMsgOptions = (chatId, messageId) => {
   return {
