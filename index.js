@@ -6,9 +6,15 @@ const token = "5681432295:AAFlKNc0IpI4JfTPumIpUL5tgk2GSpr6rDU";
 
 const bot = new TelegramBot(token, { polling: true });
 
+bot.onText(/\/start/, (msg) => {
+  bot.sendMessage(msg.chat.id, "Welcome");
+});
+
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
+
+  console.log(text)
 
   const doc = getDocRef();
   const docId = doc.id;
@@ -27,6 +33,7 @@ bot.on("message", async (msg) => {
 
 const getData = (secret, key) => {
   const data = {
+    type: "text",
     secret: secret,
     isEncryptedWithPassword: false,
     readReceiptEmail: "",
