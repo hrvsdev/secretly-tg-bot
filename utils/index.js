@@ -1,8 +1,9 @@
-import { AES, enc } from "crypto-js";
-import { customAlphabet } from "nanoid";
+const { AES, enc } = require("crypto-js");
+const { customAlphabet } = require("nanoid");
 
 const genKey = () => {
-  const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const alphabet =
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   const nanoid = customAlphabet(alphabet, 20);
   return nanoid();
 };
@@ -17,4 +18,4 @@ const decrypt = (ciphertext, key) => {
   return str ? JSON.parse(str) : null;
 };
 
-export { genKey, encrypt, decrypt};
+module.exports = { genKey, encrypt, decrypt };
