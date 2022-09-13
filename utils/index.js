@@ -18,4 +18,12 @@ const decrypt = (ciphertext, key) => {
   return str ? JSON.parse(str) : null;
 };
 
-module.exports = { genKey, encrypt, decrypt };
+const getIdandHash = (url) => {
+  const u = new URL(url);
+  const id = u.pathname.substring(1);
+  const hash = u.hash.substring(1);
+
+  return { id, hash };
+};
+
+module.exports = { genKey, encrypt, decrypt, getIdandHash };

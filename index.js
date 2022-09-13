@@ -1,6 +1,6 @@
 const TelegramBot = require("node-telegram-bot-api");
-const { saveSecret, getDocRef } = require("./firebase/db");
-const { encrypt, genKey } = require("./utils");
+const { saveSecret, getDocRef, getSecret } = require("./firebase/db");
+const { encrypt, genKey, getIdandHash, decrypt } = require("./utils");
 
 const token = "5681432295:AAFlKNc0IpI4JfTPumIpUL5tgk2GSpr6rDU";
 
@@ -26,8 +26,8 @@ bot.on("message", async (msg) => {
     // Answering the query according to query option he chose
     bot.answerCallbackQuery(query.id);
 
-    // If the option is 'text'
-    if (type === "text") {
+    // If the option is 'text' or 'redirect'
+    if (type === "text" || type === "redirect") {
       // Getting document and its id to save data
       const doc = getDocRef();
       const docId = doc.id;
@@ -42,27 +42,44 @@ bot.on("message", async (msg) => {
       bot.editMessageText(link, { chat_id: chatId, message_id: messageId });
 
       // Saving the secret to database
-      await saveSecret(getData(text, key, q), doc);
-    } else {
-      bot.editMessageText("It is under construction", {
-        chat_id: chatId,
-        message_id: messageId,
-      });
+      await saveSecret(getData(text, key, type), doc);
+      return;
+    }
+
+    // If the option is redirect
+    if (type === "decrypt") {
+      // Getting id and hash from link
+      const { id, hash } = getIdandHash(text);
+
+      // Getting secret with id
+      const res = await getSecret(id);
+
+      // Checking if document exists without any error
+      if (res.success && res.data) {
+        // Decrypting data by hash
+        const data = decrypt(res.data, hash);
+
+        // Checking if decrypting is successful
+        if (data) {
+          bot.editMessageText(data.secret, {
+            chat_id: chatId,
+            message_id: messageId,
+          });
+        } else {
+          bot.editMessageText("Your key is invalid", {
+            chat_id: chatId,
+            message_id: messageId,
+          });
+        }
+      } else {
+        bot.editMessageText("Secret is revealed before!", {
+          chat_id: chatId,
+          message_id: messageId,
+        });
+      }
     }
   });
 });
-
-const getData = (secret, key, type) => {
-  const data = {
-    type: type,
-    secret: secret,
-    isEncryptedWithPassword: false,
-    readReceiptEmail: "",
-  };
-  return encrypt(data, key);
-};
-
-const getHash = (url) => url.split("#")[1];
 
 const getReplyOptions = (arr) => {
   return {
@@ -78,4 +95,14 @@ const getReplyOptions = (arr) => {
       ],
     },
   };
+};
+
+const getData = (secret, key, type = "text") => {
+  const data = {
+    type: type,
+    secret: secret,
+    isEncryptedWithPassword: false,
+    readReceiptEmail: "",
+  };
+  return encrypt(data, key);
 };
