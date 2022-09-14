@@ -23,26 +23,4 @@ const saveSecret = async (data, doc) => {
   }
 };
 
-// Getting secret
-const getSecret = async (id) => {
-  try {
-    const res = await getDoc(doc(secretsRef, id));
-    return { success: true, data: res.data() };
-  } catch (err) {
-    console.log(err);
-    return { success: false, err };
-  }
-};
-
-// Deleting secret
-const deleteSecret = async (id) => {
-  try {
-    await deleteDoc(doc(secretsRef, id));
-    return { success: true };
-  } catch (err) {
-    console.log(err);
-    return { success: false, err };
-  }
-};
-
-module.exports = { saveSecret, getSecret, deleteSecret, getDocRef };
+module.exports = { saveSecret, getDocRef };

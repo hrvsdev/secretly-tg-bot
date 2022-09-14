@@ -1,4 +1,4 @@
-const { AES, enc } = require("crypto-js");
+const { AES } = require("crypto-js");
 const { customAlphabet } = require("nanoid");
 
 const genKey = () => {
