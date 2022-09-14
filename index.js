@@ -75,6 +75,10 @@ const sendMessage = async (text, chatId, msgId, type = "text") => {
   await saveSecret(getData(text, key, type), doc);
 };
 
+bot.on("inline_query", (query) => {
+  if (query.query) console.log(query.query);
+});
+
 const getData = (secret, key, type = "text") => {
   const data = {
     type: type,
