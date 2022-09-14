@@ -19,7 +19,9 @@
   "dependencies": {
     "crypto-js": "^4.1.1",
     "firebase": "^9.9.4",
+    "is-url": "^1.2.4",
     "nanoid": "^3.3.4",
-    "node-telegram-bot-api": "^0.59.0"
+    "node-telegram-bot-api": "^0.59.0",
+    "prepend-http": "^4.0.0"
   }
 }
