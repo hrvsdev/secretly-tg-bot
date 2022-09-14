@@ -1,9 +1,8 @@
 const TelegramBot = require("node-telegram-bot-api");
 const isUrl = require("is-url");
-const prependHttp = require("prepend-http");
 
 const { saveSecret, getDocRef } = require("./firebase/db");
-const { encrypt, genKey } = require("./utils");
+const { encrypt, genKey, addHttp } = require("./utils");
 
 const token = "5681432295:AAFlKNc0IpI4JfTPumIpUL5tgk2GSpr6rDU";
 
@@ -17,22 +16,21 @@ bot.on("message", async (msg) => {
   text = msg.text;
 
   // Checking if text is a URL
-  const prependedText = prependHttp(text);
-  const isTextURL = isUrl(prependHttp);
+  const httpText = addHttp(text);
+  const isTextURL = isUrl(httpText);
 
-  // Reply to user after receiving text
-  let reply;
+  // Changing text if it is a URL
+  text = isTextURL ? httpText : text
 
   // Showing options only if text is URL
   if (isTextURL) {
-    reply = "*Recived your text 📥:* \nChoose one of the options :"
+    const reply = "*Recived your text 📥:* \nChoose one of the options :";
+    bot.sendMessage(chatId, reply, getReplyOptions(isTextURL));
+  } else {
+    const reply = "Sending you your secret 📩";
+    const m = await bot.sendMessage(chatId, reply, getReplyOptions(isTextURL));
+    sendMessage(text, chatId, m.message_id);
   }
-  else {
-    reply = "Sending you your secret 📩"
-  }
-
-  // Sending reply with inline options for what to do
-  bot.sendMessage(chatId, reply, getReplyOptions(isTextURL));
 });
 
 // Listening for user callback of option he clicked
@@ -44,9 +42,12 @@ bot.on("callback_query", async (query) => {
 
   // Answering the query according to query option he chose
   await bot.answerCallbackQuery(query.id);
+
+  // Sending message
+  sendMessage(text, chatId, msgId, type);
 });
 
-const sendMessage = async (text, type, bot, chatId, msgId) => {
+const sendMessage = async (text, chatId, msgId, type = "text") => {
   // Getting document and its id to save data
   const doc = getDocRef();
   const docId = doc.id;
@@ -85,14 +86,15 @@ const getData = (secret, key, type = "text") => {
 };
 
 const getReplyOptions = (isTextURL) => {
-  const parse_mode = "Markdown"
-  // const reply_markup = {
-  //   inline_keyboard: [
-  //     [
-  //       { text: "Text", callback_data: "text" },
-  //       { text: "Redirect", callback_data: "redirect" },
-  //     ],
-  //   ],
-  // },
+  const parse_mode = "Markdown";
+  const reply_markup = {
+    inline_keyboard: [
+      [
+        { text: "Text", callback_data: "text" },
+        { text: "Redirect", callback_data: "redirect" },
+      ],
+    ],
+  };
 
+  return isTextURL ? { parse_mode, reply_markup } : { parse_mode };
 };

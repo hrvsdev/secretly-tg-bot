@@ -12,23 +12,6 @@ const encrypt = (data, key) => {
   return AES.encrypt(JSON.stringify(data), key).toString();
 };
 
-const decrypt = (ciphertext, key) => {
-  try {
-    const bytes = AES.decrypt(ciphertext, key);
-    const str = bytes.toString(enc.Utf8);
-    return str ? JSON.parse(str) : null;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
+const addHttp = url => !/^https?:\/\//i.test(url) ? `http://${url}` : url;
 
-const getIdandHash = (url) => {
-  const u = new URL(url);
-  const id = u.pathname.substring(1);
-  const hash = u.hash.substring(1);
-
-  return { id, hash, success: true };
-};
-
-module.exports = { genKey, encrypt, decrypt, getIdandHash };
+module.exports = { genKey, encrypt, addHttp};
