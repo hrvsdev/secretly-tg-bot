@@ -16,65 +16,70 @@ bot.on("message", async (msg) => {
 
   // Sending reply with inline options for what to do
   bot.sendMessage(chatId, reply, getReplyOptions(text));
-});
 
-// Listening for user callback of option he clicked
-bot.on("callback_query", async (query) => {
-  // Query data
-  const chatId = query.from.id;
-  const msg = JSON.parse(query.data).msg;
-  const type = JSON.parse(query.data).type;
-  const msgId = query.message.message_id;
+  // Listening for user callback of option he clicked
+  bot.on("callback_query", async (query) => {
+    // Query data
+    const type = query.data;
+    const msgId = query.message.message_id;
 
-  // Answering the query according to query option he chose
-  await bot.answerCallbackQuery(query.id, { text: "Doing your work!" });
+    // Answering the query according to query option he chose
+    await bot.answerCallbackQuery(query.id);
 
-  // If the option is 'text' or 'redirect'
-  if (type === "text" || type === "redirect") {
-    // Getting document and its id to save data
-    const doc = getDocRef();
-    const docId = doc.id;
+    // If the option is 'text' or 'redirect'
+    if (type === "text" || type === "redirect") {
+      // Getting document and its id to save data
+      const doc = getDocRef();
+      const docId = doc.id;
 
-    // Generating a random key to encrypt
-    const key = genKey();
+      // Generating a random key to encrypt
+      const key = genKey();
 
-    // Link of the secret
-    const link = `Your secret link:\nhttps://st.hrvs.me/${docId}#${key}`;
+      // Link of the secret
+      const link = `Your secret link:\nhttps://st.hrvs.me/${docId}#${key}`;
 
-    // Editing the original message to avoid clutter and duplicate clicking
-    bot.editMessageText(link, getEditMsgOptions(chatId, msgId));
+      // Editing the original message to avoid clutter and duplicate clicking
+      bot.editMessageText(link, getEditMsgOptions(chatId, msgId));
 
-    // Saving the secret to database
-    await saveSecret(getData(msg, key, type), doc);
-    return;
-  }
+      // Saving the secret to database
+      await saveSecret(getData(text, key, type), doc);
+      return;
+    }
 
-  // If the option is redirect
-  if (type === "decrypt") {
-    // Getting id and hash from link
-    const { id, hash } = getIdandHash(msg);
+    // If the option is 'decrypt'
+    if (type === "decrypt") {
+      try {
+        // Getting id and hash from link
+        const { id, hash } = getIdandHash(text);
 
-    // Getting secret with id
-    const res = await getSecret(id);
+        // Getting secret with id
+        const res = await getSecret(id);
 
-    // Checking if document exists without any error
-    if (res.success && res.data) {
-      // Decrypting data by hash
-      const data = decrypt(res.data.data, hash);
+        // Checking if document exists without any error
+        if (res.success && res.data) {
+          // Decrypting data by hash
+          const data = decrypt(res.data.data, hash);
 
-      // Checking if decrypting is successful
-      if (data) {
-        const secret = data.secret;
-        bot.editMessageText(secret, getEditMsgOptions(chatId, msgId));
-      } else {
-        const text = "Your key is invalid";
+          // Checking if decryption is successful
+          if (data) {
+            const secret = data.secret;
+            bot.editMessageText(secret, getEditMsgOptions(chatId, msgId));
+          } else {
+            const text = "Your key is invalid";
+            bot.editMessageText(text, getEditMsgOptions(chatId, msgId));
+          }
+        } else {
+          const text = "Secret has been revealed before!";
+          bot.editMessageText(text, getEditMsgOptions(chatId, msgId));
+        }
+      } catch (error) {
+        console.log(error);
+        const text =
+          "Something terrible happended on our end! \n *Status code:* 500";
         bot.editMessageText(text, getEditMsgOptions(chatId, msgId));
       }
-    } else {
-      const text = "Secret has been revealed before!";
-      bot.editMessageText(text, getEditMsgOptions(chatId, msgId));
     }
-  }
+  });
 });
 
 const getEditMsgOptions = (chatId, messageId) => {
@@ -103,21 +108,10 @@ const getReplyOptions = (msg) => {
     reply_markup: {
       inline_keyboard: [
         [
-          {
-            text: "Text",
-            callback_data: JSON.stringify({ msg, type: "text" }),
-          },
-          {
-            text: "Redirect",
-            callback_data: JSON.stringify({ msg, type: "redirect" }),
-          },
+          { text: "Text", callback_data: "text" },
+          { text: "Redirect", callback_data: "redirect" },
         ],
-        [
-          {
-            text: "Decrypt it",
-            callback_data: JSON.stringify({ msg, type: "decrypt" }),
-          },
-        ],
+        [{ text: "Decrypt it", callback_data: "decrypt" }],
       ],
     },
   };

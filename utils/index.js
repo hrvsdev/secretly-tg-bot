@@ -18,8 +18,8 @@ const decrypt = (ciphertext, key) => {
     const str = bytes.toString(enc.Utf8);
     return str ? JSON.parse(str) : null;
   } catch (error) {
-    console.log(error)
-    return null
+    console.log(error);
+    return null;
   }
 };
 
@@ -28,7 +28,7 @@ const getIdandHash = (url) => {
   const id = u.pathname.substring(1);
   const hash = u.hash.substring(1);
 
-  return { id, hash };
+  return { id, hash, success: true };
 };
 
 module.exports = { genKey, encrypt, decrypt, getIdandHash };
