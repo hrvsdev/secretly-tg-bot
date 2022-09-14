@@ -12,7 +12,7 @@ bot.on("message", async (msg) => {
   // Chat id and text sent by user
   const chatId = msg.chat.id;
   text = msg.text;
-  
+
   // Reply text to user to choose one option
   const reply = `*Recived your text:* \n${text} \n\nChoose one of the options:`;
 
@@ -48,40 +48,6 @@ bot.on("callback_query", async (query) => {
     // Saving the secret to database
     await saveSecret(getData(text, key, type), doc);
     bot.sendMessage(chatId, "Saved! 👍🏼");
-  }
-
-  // If the option is 'decrypt'
-  if (type === "decrypt") {
-    try {
-      // Getting id and hash from link
-      const { id, hash } = getIdandHash(text);
-
-      // Getting secret with id
-      const res = await getSecret(id);
-
-      // Checking if document exists without any error
-      if (res.success && res.data) {
-        // Decrypting data by hash
-        const data = decrypt(res.data.data, hash);
-
-        // Checking if decryption is successful
-        if (data) {
-          const secret = data.secret;
-          bot.editMessageText(secret, getEditMsgOptions(chatId, msgId));
-        } else {
-          const text = "Your key is invalid";
-          bot.editMessageText(text, getEditMsgOptions(chatId, msgId));
-        }
-      } else {
-        const text = "Secret has been revealed before!";
-        bot.editMessageText(text, getEditMsgOptions(chatId, msgId));
-      }
-    } catch (error) {
-      console.log(error);
-      const text =
-        "Something terrible happended on our end! \n *Status code:* 500";
-      bot.editMessageText(text, getEditMsgOptions(chatId, msgId));
-    }
   }
 });
 
