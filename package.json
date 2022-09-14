@@ -1,7 +1,7 @@
 {
   "name": "secretly-tg-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "An easy to use telegram bot for https://st.hrvs.me",
   "main": "index.js",
   "scripts": {
     "dev": "wrangler dev"
