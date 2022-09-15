@@ -22,7 +22,7 @@ bot.on("msg::url", (ctx) => {
 bot.start();
 
 
-const sendMessage = async (text, chatId, msgId, type = "text") => {
+const sendMessage = (text: string, chatId:string, msgId:string, type = "text") => {
   // Getting document and its id to save data
   const doc = getDocRef();
   const docId = doc.id;
@@ -37,5 +37,5 @@ const sendMessage = async (text, chatId, msgId, type = "text") => {
   bot.editMessageText(link, getEditMsgOptions(chatId, msgId));
 
   // Saving the secret to database
-  // await saveSecret(getData(text, key, type), doc);
+  await saveSecret(getData(text, key, type), doc);
 };
