@@ -76,7 +76,28 @@ const sendMessage = async (text, chatId, msgId, type = "text") => {
 };
 
 bot.on("inline_query", (query) => {
-  if (query.query) console.log(query.query);
+  const text1 = {
+    type: "article",
+    id: 1,
+    title: `${query.query} - 1`,
+    input_message_content: { message_text: "It is 1" },
+  };
+
+  const text2 = {
+    type: "article",
+    id: 2,
+    title: `${query.query} - 2`,
+    input_message_content: { message_text: "It is 2" },
+  };
+
+  const text3 = {
+    type: "article",
+    id: 3,
+    title: `${query.query} - 3`,
+    input_message_content: { message_text: "It is 3" },
+  };
+
+  bot.answerInlineQuery(query.id, [text1, text2, text3], { cache_time: 10 });
 });
 
 const getData = (secret, key, type = "text") => {
