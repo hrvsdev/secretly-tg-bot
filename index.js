@@ -57,23 +57,7 @@ bot.on("callback_query", async (query) => {
   sendMessage(text, chatId, msgId, type);
 });
 
-const sendMessage = async (text, chatId, msgId, type = "text") => {
-  // Getting document and its id to save data
-  const doc = getDocRef();
-  const docId = doc.id;
 
-  // Generating a random key to encrypt
-  const key = genKey();
-
-  // Link of the secret
-  const link = `Your one-time secret link: \n\n*https://st.hrvs.me/${docId}#${key}*`;
-
-  // Editing the original message to avoid clutter and duplicate clicking
-  bot.editMessageText(link, getEditMsgOptions(chatId, msgId));
-
-  // Saving the secret to database
-  // await saveSecret(getData(text, key, type), doc);
-};
 
 bot.on("inline_query", (query) => {
   if (!query.query) {
