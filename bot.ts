@@ -1,5 +1,6 @@
 import { Bot } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
-// import { getDocRef } from "./firebase/db.ts";
+
+import { getDocRef } from "./firebase/db.ts";
 import { getWelcomeMsg } from "./static.ts";
 
 const bot = new Bot("5681432295:AAFlKNc0IpI4JfTPumIpUL5tgk2GSpr6rDU");
@@ -11,6 +12,14 @@ bot.command(["start", "help"], (ctx) => {
   });
 });
 
-// bot.on("message", (ctx) => ctx.reply(`Doc ref: ${getDocRef().id}`));
+bot.on("msg::url", (ctx) => {  
+    // Chat id and text sent by user
+    const chatId = ctx.chat.id;
+    const msg = ctx.message?.text
+
+    const reply = "*Recived your text:* \nChoose one of the options :";
+    // ctx.reply(reply)
+}
+
 
 bot.start();

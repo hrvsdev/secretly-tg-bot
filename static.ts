@@ -1,3 +1,4 @@
+import { ParseMode } from "https://deno.land/x/grammy@v1.11.0/types.deno.ts";
 import { encrypt } from "./utils/index.ts";
 
 export const getData = (secret: string, key: string, type = "text") => {
@@ -10,8 +11,8 @@ export const getData = (secret: string, key: string, type = "text") => {
   return encrypt(data, key);
 };
 
-export const getReplyButtons = (isTextURL: boolean) => {
-  const parse_mode = "Markdown";
+export const getReplyButtons = () => {
+  const parse_mode: ParseMode = "Markdown"
   const reply_markup = {
     inline_keyboard: [
       [
@@ -21,7 +22,7 @@ export const getReplyButtons = (isTextURL: boolean) => {
     ],
   };
 
-  return isTextURL ? { parse_mode, reply_markup } : { parse_mode };
+  return { parse_mode, reply_markup }
 };
 
 export const getEditMsgOptions = (chatId: string, messageId: string) => {
@@ -29,7 +30,7 @@ export const getEditMsgOptions = (chatId: string, messageId: string) => {
     chat_id: chatId,
     message_id: messageId,
     parse_mode: "Markdown",
-  disable_web_page_preview: true,
+    disable_web_page_preview: true,
   };
 };
 
