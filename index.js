@@ -72,7 +72,7 @@ const sendMessage = async (text, chatId, msgId, type = "text") => {
   bot.editMessageText(link, getEditMsgOptions(chatId, msgId));
 
   // Saving the secret to database
-  await saveSecret(getData(text, key, type), doc);
+  // await saveSecret(getData(text, key, type), doc);
 };
 
 bot.on("inline_query", (query) => {
