@@ -1,4 +1,4 @@
-const { initializeApp } = require("firebase/app");
+import firebase from 'https://cdn.skypack.dev/firebase';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBqSH9v1Jd2eHyUBR-4Hxw7eUOwIhLwm7I",
