@@ -1,6 +1,16 @@
 import { ParseMode } from "https://deno.land/x/grammy@v1.11.0/types.deno.ts";
 import { encrypt } from "./utils/index.ts";
 
+interface IMsgOptions {
+  parse_mode: ParseMode;
+  disable_web_page_preview: boolean;
+}
+
+export const msgOptions: IMsgOptions = {
+  parse_mode: "Markdown",
+  disable_web_page_preview: true,
+};
+
 export const getData = (secret: string, key: string, type = "text") => {
   const data = {
     type: type,
@@ -12,7 +22,6 @@ export const getData = (secret: string, key: string, type = "text") => {
 };
 
 export const getReplyButtons = () => {
-  const parse_mode: ParseMode = "Markdown"
   const reply_markup = {
     inline_keyboard: [
       [
@@ -22,15 +31,14 @@ export const getReplyButtons = () => {
     ],
   };
 
-  return { parse_mode, reply_markup }
+  return { ...msgOptions, reply_markup };
 };
 
 export const getEditMsgOptions = (chatId: string, messageId: string) => {
   return {
     chat_id: chatId,
     message_id: messageId,
-    parse_mode: "Markdown",
-    disable_web_page_preview: true,
+    ...msgOptions
   };
 };
 
