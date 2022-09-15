@@ -1,4 +1,4 @@
-import firebase from 'https://cdn.skypack.dev/firebase';
+import { initializeApp } from "https://cdn.skypack.dev/firebase/app";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBqSH9v1Jd2eHyUBR-4Hxw7eUOwIhLwm7I",
@@ -12,5 +12,4 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-
-module.exports = app
+export default app
