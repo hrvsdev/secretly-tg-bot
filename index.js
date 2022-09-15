@@ -111,39 +111,3 @@ bot.on("inline_query", (query) => {
   bot.answerInlineQuery(query.id, [text1, text2, text3], { cache_time: 10 });
 });
 
-const getData = (secret, key, type = "text") => {
-  const data = {
-    type: type,
-    secret: secret,
-    isEncryptedWithPassword: false,
-    readReceiptEmail: "",
-  };
-  return encrypt(data, key);
-};
-
-const getEditMsgOptions = (chatId, messageId) => {
-  return {
-    chat_id: chatId,
-    message_id: messageId,
-    parse_mode: "Markdown",
-    disable_web_page_preview: true,
-  };
-};
-
-const getReplyOptions = (isTextURL) => {
-  const parse_mode = "Markdown";
-  const reply_markup = {
-    inline_keyboard: [
-      [
-        { text: "Text", callback_data: "text" },
-        { text: "Redirect", callback_data: "redirect" },
-      ],
-    ],
-  };
-
-  return isTextURL ? { parse_mode, reply_markup } : { parse_mode };
-};
-
-const getWelcomeMsg = (name = "user") => {
-  return `Hello ${name} 👋🏼,\n\nSend me a secret and I will return with a *one-time* secret link. \nThe secret can be anything which is confidential like *password, key token, card number* or *OTP*.\n\nYou can also send me *URL* and I will ask if you want to redirect to it. \n\nYour data will always be *end-to-end encrypted* with the *HASH* which is never saved. \n\nFor more info: [Open Secretly](https://st.hrvs.me)`;
-};
