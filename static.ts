@@ -32,6 +32,5 @@ export const getReplyButtons = () => {
   return { ...msgOptions, reply_markup };
 };
 
-export const getWelcomeMsg = (name = "user") => {
-  return `Hello ${name} 👋🏼,\n\nSend me a secret and I will return with a *one-time* secret link. \nThe secret can be anything which is confidential like *password, key token, card number* or *OTP*.\n\nYou can also send me *URL* and I will ask if you want to redirect to it. \n\nYour data will always be *end-to-end encrypted* with the *HASH* which is never saved. \n\nFor more info: [Open Secretly](https://st.hrvs.me)`;
-};
+export const getWelcomeMsg = (name = "user") =>
+  `Hello ${name} 👋🏼,\n\nSend me a secret and I will return with a *one-time* secret link. \nThe secret can be anything which is confidential like *password, key token, card number* or *OTP*.\n\nYou can also send me *URL* and I will ask if you want to redirect to it. \n\nYour data will always be *end-to-end encrypted* with the *HASH* which is never saved. \n\nFor more info: [Open Secretly](https://st.hrvs.me)`;
