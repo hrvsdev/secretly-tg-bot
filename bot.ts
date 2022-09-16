@@ -39,7 +39,7 @@ bot.on("msg:text", async (ctx) => {
   } else {
     const replyText = "Sending you your secret ...";
     const reply = await ctx.reply(replyText);
-    sendMessage(msg, "text", { chatId, msgId: reply.message_id });
+    sendSecret(msg, "text", { chatId, msgId: reply.message_id });
   }
 });
 
@@ -49,8 +49,8 @@ bot.callbackQuery("text", async (ctx) => {
   const msgId = ctx.msg?.message_id as number;
 
   await ctx.answerCallbackQuery();
-  if (msgId !== ctx.session.q) return;
-  else sendMessage(ctx.session.input, "text", { chatId, msgId });
+  if (msgId !== ctx.session.q) sendSessionExpired(chatId, msgId);
+  else sendSecret(ctx.session.input, "text", { chatId, msgId });
 });
 
 // Listening for callback query for 'redirect'
@@ -59,12 +59,12 @@ bot.callbackQuery("redirect", async (ctx) => {
   const msgId = ctx.msg?.message_id as number;
   
   await ctx.answerCallbackQuery();
-  if (msgId !== ctx.session.q) return;
-  else sendMessage(addHttp(ctx.session.input), "redirect", { chatId, msgId });
+  if (msgId !== ctx.session.q) sendSessionExpired(chatId, msgId);
+  else sendSecret(addHttp(ctx.session.input), "redirect", { chatId, msgId });
 });
 
 // Send message method
-const sendMessage = (text: string, type: string, ids: IEditMessage) => {
+const sendSecret = (text: string, type: string, ids: IEditMessage) => {
   // Getting document and its id to save data
   const doc = getDocRef();
   const docId = doc.id;
@@ -80,4 +80,10 @@ const sendMessage = (text: string, type: string, ids: IEditMessage) => {
 
   // Saving the secret to database
   saveSecret(getData(text, key, type), doc);
+};
+
+// Session expired message
+const sendSessionExpired = (chatId: number, msgId: number) => {
+  const text = `Session expired! \nPlease, try again.`;
+  bot.api.editMessageText(chatId, msgId, text, msgOptions);
 };
