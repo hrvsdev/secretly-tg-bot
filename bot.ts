@@ -3,7 +3,7 @@ import { Bot, session } from "./deps.ts";
 import { getDocRef, saveSecret } from "./firebase/db.ts";
 import { getData, getReplyButtons } from "./static.ts";
 import { getWelcomeMsg, msgOptions } from "./static.ts";
-import { addHttp, genKey } from "./utils/utils.ts";
+import { addHttp, genKey, isUrl } from "./utils/utils.ts";
 
 import { type IEditMessage, type MyContext } from "./types.ts";
 
@@ -18,26 +18,27 @@ bot.command(["start", "help", "env"], (ctx) =>
   ctx.reply(getWelcomeMsg(ctx.from?.first_name), msgOptions)
 );
 
-// Handling when message is a 'URL'
-bot.on("msg::url", async (ctx) => {
-  // Message sent by user storing in session
-  ctx.session.input = ctx.message?.text as string;
-
-  // Replying the user
-  const replyText = "Recived your secret:\n\n*Choose a option:*";
-  await ctx.reply(replyText, getReplyButtons());
-});
-
-// Handling when message is 'text'
+// Handling new messages
 bot.on("msg:text", async (ctx) => {
-  // Chat id and text sent by user
-  const chatId = ctx.chat.id;
+  // Context data
   const msg = ctx.msg.text;
+  const chatId = ctx.chat.id;
 
-  // Replying the user
-  const replyText = "Sending you your secret ...";
-  const reply = await ctx.reply(replyText);
-  sendMessage(msg, "text", { chatId, msgId: reply.message_id });
+  // Message sent by user storing in session
+  ctx.session.input = msg;
+
+  // Checking if text is a URL
+  const isTextUrl = isUrl(msg);
+
+  // Handling reply based on text
+  if (isTextUrl) {
+    const replyText = "Recived your secret:\n\n*Choose a option:*";
+    ctx.reply(replyText, getReplyButtons());
+  } else {
+    const replyText = "Sending you your secret ...";
+    const reply = await ctx.reply(replyText);
+    sendMessage(msg, "text", { chatId, msgId: reply.message_id });
+  }
 });
 
 // Listening for callback query for 'text'
