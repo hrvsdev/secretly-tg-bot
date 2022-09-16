@@ -1,5 +1,5 @@
 import { ParseMode } from "https://deno.land/x/grammy@v1.11.0/types.deno.ts";
-import { encrypt } from "./utils/index.ts";
+import { encrypt } from "./utils/utils.ts";
 
 interface IMsgOptions {
   parse_mode: ParseMode;
