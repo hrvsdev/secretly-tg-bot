@@ -63,19 +63,14 @@ bot.callbackQuery("redirect", async (ctx) => {
 });
 
 bot.on("inline_query", async (ctx) => {
-  const doc = getDocRef();
-  const docId = doc.id;
-  const key = genKey();
-  const link = `https://st.hrvs.me/${docId}#${key}`;
-  const reply = `Your one-time secret link: \n\n*${link}`;
   await ctx.answerInlineQuery([
     {
       type: "article",
       id: "1",
       title: "Click to send secret",
-      description: link,
+      description: "It is description",
       input_message_content: {
-        message_text: reply,
+        message_text: "It is msg text",
         parse_mode: "Markdown",
       },
     },
