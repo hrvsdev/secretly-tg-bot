@@ -58,6 +58,7 @@ bot.callbackQuery("redirect", async (ctx) => {
   sendMessage(addHttp(ctx.session.input), "redirect", { chatId, msgId });
 });
 
+// Starting the bot
 bot.start();
 
 // Send message method
@@ -78,3 +79,5 @@ const sendMessage = (text: string, type: string, ids: IEditMessage) => {
   // Saving the secret to database
   saveSecret(getData(text, key, type), doc);
 };
+
+export default bot
