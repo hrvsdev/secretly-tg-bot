@@ -62,28 +62,47 @@ bot.callbackQuery("redirect", async (ctx) => {
   else sendSecret(addHttp(ctx.session.input), "redirect", { chatId, msgId });
 });
 
+// Handling inline query
 bot.on("inline_query", async (ctx) => {
-  const doc = getDocRef();
-  const docId = doc.id;
-  const key = genKey();
-  const link = `https://st.hrvs.me/${docId}#${key}`;
-  const reply = `Your one-time secret link: \n\n*${link}*`;
+  // Query text
+  const query = ctx.inlineQuery.query;
+
+  // Generating document data and link
+  const { doc, key, link, msg } = genDocAndLink();
+
+  // Answering inline query
   await ctx.answerInlineQuery([
     {
       type: "article",
       id: "1",
       title: "Click to send secret",
+      url: link,
       description: link,
       input_message_content: {
-        message_text: reply,
+        message_text: msg,
         ...msgOptions,
       },
     },
   ]);
+
+  // Saving the secret to database
+  saveSecret(getData(query, key), doc);
 });
 
 // Send message method
 const sendSecret = (text: string, type: string, ids: IEditMessage) => {
+  // Generating document data and link
+  const { doc, key, msg } = genDocAndLink();
+
+  // Editing the original message to avoid clutter and duplicate clicking
+  bot.api.editMessageText(ids.chatId, ids.msgId, msg, msgOptions);
+
+  // Saving the secret to database
+  saveSecret(getData(text, key, type), doc);
+};
+
+// Generating random link for saving data
+const genDocAndLink = () => {
   // Getting document and its id to save data
   const doc = getDocRef();
   const docId = doc.id;
@@ -92,13 +111,12 @@ const sendSecret = (text: string, type: string, ids: IEditMessage) => {
   const key = genKey();
 
   // Link of the secret
-  const link = `Your one-time secret link: \n\n*https://st.hrvs.me/${docId}#${key}*`;
+  const link = `https://st.hrvs.me/${docId}#${key}`;
 
-  // Editing the original message to avoid clutter and duplicate clicking
-  bot.api.editMessageText(ids.chatId, ids.msgId, link, msgOptions);
+  // Message for the secret
+  const msg = `Your one-time secret link: \n\n*${link}*`;
 
-  // Saving the secret to database
-  saveSecret(getData(text, key, type), doc);
+  return { doc, key, link, msg };
 };
 
 // Session expired message
