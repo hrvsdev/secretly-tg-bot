@@ -11,7 +11,7 @@ import { type IEditMessage, type MyContext } from "./types.ts";
 export const bot = new Bot<MyContext>(Deno.env.get("TOKEN") || "");
 
 // Installing session middleware, and defining the initial session value.
-bot.use(session({ initial: () => ({ input: "", id: 0, q: 0 }) }));
+bot.use(session({ initial: () => ({ input: "", q: 0 }) }));
 
 // Welcome message on start and help command
 bot.command(["start", "help", "env"], (ctx) =>
@@ -30,12 +30,11 @@ bot.on("msg:text", async (ctx) => {
   // Handling reply based on text
   if (isTextUrl) {
     const replyText = "Recived your secret:\n\n*Choose a option:*";
-    const q = ctx.reply(replyText, getReplyButtons());
+    const q = await ctx.reply(replyText, getReplyButtons());
 
     // Storing data in session if options are shown
     ctx.session.input = msg;
-    ctx.session.id = ctx.msg.message_id;
-    ctx.session.q = (await q).message_id;
+    ctx.session.q = q.message_id;
   } else {
     const replyText = "Sending you your secret ...";
     const reply = await ctx.reply(replyText);
@@ -57,10 +56,30 @@ bot.callbackQuery("text", async (ctx) => {
 bot.callbackQuery("redirect", async (ctx) => {
   const chatId = ctx.chat?.id as number;
   const msgId = ctx.msg?.message_id as number;
-  
+
   await ctx.answerCallbackQuery();
   if (msgId !== ctx.session.q) sendSessionExpired(chatId, msgId);
   else sendSecret(addHttp(ctx.session.input), "redirect", { chatId, msgId });
+});
+
+bot.on("inline_query", async (ctx) => {
+  const doc = getDocRef();
+  const docId = doc.id;
+  const key = genKey();
+  const link = `https://st.hrvs.me/${docId}#${key}`;
+  const reply = `Your one-time secret link: \n\n*${link}`;
+  await ctx.answerInlineQuery([
+    {
+      type: "article",
+      id: "1",
+      title: "Click to send secret",
+      description: link,
+      input_message_content: {
+        message_text: reply,
+        parse_mode: "Markdown",
+      },
+    },
+  ]);
 });
 
 // Send message method
