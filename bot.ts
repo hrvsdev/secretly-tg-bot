@@ -65,10 +65,10 @@ bot.callbackQuery("redirect", async (ctx) => {
 // Handling inline query
 bot.on("inline_query", async (ctx) => {
   // Query text
-  const query = ctx.inlineQuery.query;
+  // const query = ctx.inlineQuery.query;
 
   // Generating document data and link
-  const { doc, key, link, msg } = genDocAndLink();
+  const { link, msg } = genDocAndLink();
 
   // Answering inline query
   await ctx.answerInlineQuery([
@@ -84,7 +84,7 @@ bot.on("inline_query", async (ctx) => {
     },
   ]);
 
-  ctx.reply(query)
+  console.log(ctx.chosenInlineResult);
 
   // Saving the secret to database
   // saveSecret(getData(query, key), doc);
