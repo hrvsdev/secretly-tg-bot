@@ -1,4 +1,4 @@
-import { Context, SessionFlavor } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
+import { Context, SessionFlavor } from "./deps.ts";
 
 export interface IEditMessage {
   chatId: number | string;

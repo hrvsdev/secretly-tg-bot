@@ -1,6 +1,8 @@
 // Grammy
-export { Bot, session, webhookCallback } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
+export { Bot, session } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
+export { Context, webhookCallback } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
 export type { ParseMode } from "https://deno.land/x/grammy@v1.11.0/types.deno.ts";
+export type { SessionFlavor } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
 
 // Dotenv
 export { config } from "https://deno.land/x/dotenv@v1.0.1/mod.ts";
@@ -17,4 +19,3 @@ export { AES } from "https://cdn.skypack.dev/crypto-js";
 
 // Nano Id
 export { customAlphabet } from "https://cdn.skypack.dev/nanoid";
-
