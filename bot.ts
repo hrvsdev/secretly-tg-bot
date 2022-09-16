@@ -8,7 +8,7 @@ import { addHttp, genKey } from "./utils/utils.ts";
 import { type IEditMessage, type MyContext } from "./types.ts";
 
 // Initialializing new bot
-const bot = new Bot<MyContext>("5681432295:AAFlKNc0IpI4JfTPumIpUL5tgk2GSpr6rDU");
+const bot = new Bot<MyContext>(Deno.env.get("TOKEN"));
 
 // Installing session middleware, and defining the initial session value.
 bot.use(session({ initial: () => ({ input: "" }) }));
@@ -57,9 +57,6 @@ bot.callbackQuery("redirect", async (ctx) => {
   await ctx.answerCallbackQuery();
   sendMessage(addHttp(ctx.session.input), "redirect", { chatId, msgId });
 });
-
-// Starting the bot
-bot.start();
 
 // Send message method
 const sendMessage = (text: string, type: string, ids: IEditMessage) => {
