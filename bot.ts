@@ -3,7 +3,7 @@ import { Bot, session } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
 import { getDocRef, saveSecret } from "./firebase/db.ts";
 import { getData, getReplyButtons } from "./static.ts";
 import { getWelcomeMsg, msgOptions } from "./static.ts";
-import { addHttp, genKey } from "./utils/index.ts";
+import { addHttp, genKey } from "./utils/utils.ts";
 
 import { type IEditMessage, type MyContext } from "./types.ts";
 
@@ -14,21 +14,21 @@ const bot = new Bot<MyContext>("5681432295:AAFlKNc0IpI4JfTPumIpUL5tgk2GSpr6rDU")
 bot.use(session({ initial: () => ({ input: "" }) }));
 
 // Welcome message on start and help command
-bot.command(["start", "help"], (ctx) => {
-  ctx.reply(getWelcomeMsg(ctx.from?.first_name), msgOptions);
-});
+bot.command(["start", "help"], (ctx) =>
+  ctx.reply(getWelcomeMsg(ctx.from?.first_name), msgOptions)
+);
 
-// Handling when message is a URL
+// Handling when message is a 'URL'
 bot.on("msg::url", async (ctx) => {
-  // Chat id and text sent by user
+  // Message sent by user storing in session
   ctx.session.input = ctx.message?.text as string;
 
   // Replying the user
-  const replyText = "Choose a option:";
+  const replyText = "Recived your secret:\n\n*Choose a option:*";
   await ctx.reply(replyText, getReplyButtons());
 });
 
-// Handling when message is a text
+// Handling when message is 'text'
 bot.on("msg:text", async (ctx) => {
   // Chat id and text sent by user
   const chatId = ctx.chat.id;
