@@ -12,12 +12,4 @@ const encrypt = (data: any, key: string): string =>
 
 const addHttp = (url: string) => (!/^https?:\/\//i.test(url) ? `http://${url}` : url);
 
-const isUrl = (str: string) => {
-  try {
-    new URL(addHttp(str));
-    return true;
-  } catch (_err) {
-    return false;
-  }
-};
-export { genKey, encrypt, addHttp, isUrl };
+export { genKey, encrypt, addHttp };

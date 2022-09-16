@@ -1,9 +1,9 @@
-import { Bot, session } from "./deps.ts";
+import { Bot, isUrl, session } from "./deps.ts";
 
 import { getDocRef, saveSecret } from "./firebase/db.ts";
 import { getData, getReplyButtons } from "./static.ts";
 import { getWelcomeMsg, msgOptions } from "./static.ts";
-import { addHttp, genKey, isUrl } from "./utils/utils.ts";
+import { addHttp, genKey } from "./utils/utils.ts";
 
 import { type IEditMessage, type MyContext } from "./types.ts";
 
@@ -28,7 +28,7 @@ bot.on("msg:text", async (ctx) => {
   ctx.session.input = msg;
 
   // Checking if text is a URL
-  const isTextUrl = isUrl(msg);
+  const isTextUrl = isUrl(addHttp(msg));
 
   // Handling reply based on text
   if (isTextUrl) {

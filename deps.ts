@@ -16,3 +16,7 @@ export { AES } from "https://cdn.skypack.dev/crypto-js";
 
 // Nano Id
 export { customAlphabet } from "https://cdn.skypack.dev/nanoid";
+
+// Is URL
+import isUrl from "https://cdn.skypack.dev/is-url";
+export { isUrl };
