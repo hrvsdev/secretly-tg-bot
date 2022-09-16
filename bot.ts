@@ -11,7 +11,7 @@ import { type IEditMessage, type MyContext } from "./types.ts";
 export const bot = new Bot<MyContext>(Deno.env.get("TOKEN") || "");
 
 // Installing session middleware, and defining the initial session value.
-bot.use(session({ initial: () => ({ input: "" }) }));
+bot.use(session({ initial: () => ({ input: "", id: 0, q: 0 }) }));
 
 // Welcome message on start and help command
 bot.command(["start", "help", "env"], (ctx) =>
@@ -24,16 +24,18 @@ bot.on("msg:text", async (ctx) => {
   const msg = ctx.msg.text;
   const chatId = ctx.chat.id;
 
-  // Message sent by user storing in session
-  ctx.session.input = msg;
-
   // Checking if text is a URL
   const isTextUrl = isUrl(addHttp(msg));
 
   // Handling reply based on text
   if (isTextUrl) {
     const replyText = "Recived your secret:\n\n*Choose a option:*";
-    ctx.reply(replyText, getReplyButtons());
+    const q = ctx.reply(replyText, getReplyButtons());
+
+    // Message sent by user storing in session
+    ctx.session.input = msg;
+    ctx.session.id = ctx.msg.message_id;
+    ctx.session.q = (await q).message_id;
   } else {
     const replyText = "Sending you your secret ...";
     const reply = await ctx.reply(replyText);
@@ -47,6 +49,7 @@ bot.callbackQuery("text", async (ctx) => {
   const msgId = ctx.msg?.message_id as number;
 
   await ctx.answerCallbackQuery();
+  if (msgId !== ctx.session.q) return;
   sendMessage(ctx.session.input, "text", { chatId, msgId });
 });
 
@@ -54,8 +57,9 @@ bot.callbackQuery("text", async (ctx) => {
 bot.callbackQuery("redirect", async (ctx) => {
   const chatId = ctx.chat?.id as number;
   const msgId = ctx.msg?.message_id as number;
-
+  
   await ctx.answerCallbackQuery();
+  if (msgId !== ctx.session.q) return;
   sendMessage(addHttp(ctx.session.input), "redirect", { chatId, msgId });
 });
 

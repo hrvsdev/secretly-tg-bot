@@ -7,6 +7,8 @@ export interface IEditMessage {
 
 export interface ISession {
   input: string;
+  id: number,
+  q: number
 }
 
 // Flavor the context type to include sessions.
