@@ -14,7 +14,7 @@ const addHttp = (url: string) => (!/^https?:\/\//i.test(url) ? `http://${url}` :
 
 const isUrl = (str: string) => {
   try {
-    new URL(str);
+    new URL(addHttp(str));
     return true;
   } catch (_err) {
     return false;
