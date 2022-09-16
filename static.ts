@@ -24,22 +24,12 @@ export const getData = (secret: string, key: string, type = "text") => {
 export const getReplyButtons = () => {
   const reply_markup = {
     inline_keyboard: [
-      [
-        { text: "Text", callback_data: "text" },
-        { text: "Redirect", callback_data: "redirect" },
-      ],
+      [{ text: "Text", callback_data: "text" }],
+      [{ text: "Redirect", callback_data: "redirect" }],
     ],
   };
 
   return { ...msgOptions, reply_markup };
-};
-
-export const getEditMsgOptions = (chatId: string, messageId: string) => {
-  return {
-    chat_id: chatId,
-    message_id: messageId,
-    ...msgOptions
-  };
 };
 
 export const getWelcomeMsg = (name = "user") => {
