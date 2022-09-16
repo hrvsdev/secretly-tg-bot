@@ -73,10 +73,10 @@ bot.on("inline_query", async (ctx) => {
       type: "article",
       id: "1",
       title: "Click to send secret",
-      description: "It is description",
+      description: link,
       input_message_content: {
         message_text: reply,
-        parse_mode: "Markdown",
+        ...msgOptions,
       },
     },
   ]);
