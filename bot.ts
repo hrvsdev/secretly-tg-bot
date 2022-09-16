@@ -76,7 +76,6 @@ bot.on("inline_query", async (ctx) => {
       type: "article",
       id: "1",
       title: "Click to send secret",
-      url: link,
       description: link,
       input_message_content: {
         message_text: msg,
@@ -85,8 +84,10 @@ bot.on("inline_query", async (ctx) => {
     },
   ]);
 
+  ctx.reply(query)
+
   // Saving the secret to database
-  saveSecret(getData(query, key), doc);
+  // saveSecret(getData(query, key), doc);
 });
 
 // Send message method
