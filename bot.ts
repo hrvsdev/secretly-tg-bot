@@ -32,7 +32,7 @@ bot.on("msg:text", async (ctx) => {
     const replyText = "Recived your secret:\n\n*Choose a option:*";
     const q = ctx.reply(replyText, getReplyButtons());
 
-    // Message sent by user storing in session
+    // Storing data in session if options are shown
     ctx.session.input = msg;
     ctx.session.id = ctx.msg.message_id;
     ctx.session.q = (await q).message_id;
@@ -50,7 +50,7 @@ bot.callbackQuery("text", async (ctx) => {
 
   await ctx.answerCallbackQuery();
   if (msgId !== ctx.session.q) return;
-  sendMessage(ctx.session.input, "text", { chatId, msgId });
+  else sendMessage(ctx.session.input, "text", { chatId, msgId });
 });
 
 // Listening for callback query for 'redirect'
@@ -60,7 +60,7 @@ bot.callbackQuery("redirect", async (ctx) => {
   
   await ctx.answerCallbackQuery();
   if (msgId !== ctx.session.q) return;
-  sendMessage(addHttp(ctx.session.input), "redirect", { chatId, msgId });
+  else sendMessage(addHttp(ctx.session.input), "redirect", { chatId, msgId });
 });
 
 // Send message method
