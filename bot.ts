@@ -8,7 +8,7 @@ import { addHttp, genKey } from "./utils/utils.ts";
 import { type IEditMessage, type MyContext } from "./types.ts";
 
 // Initialializing new bot
-export const bot = new Bot<MyContext>(Deno.env.get("TOKEN")|| "");
+export const bot = new Bot<MyContext>("5798759135:AAE_ZPA1lATSZbSgeOlgPEyKTCbfVqPjZDg");
 
 // Installing session middleware, and defining the initial session value.
 bot.use(session({ initial: () => ({ input: "" }) }));
