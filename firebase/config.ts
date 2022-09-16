@@ -1,4 +1,4 @@
-import { initializeApp } from "https://cdn.skypack.dev/firebase/app";
+import { initializeApp } from "../deps.ts";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBqSH9v1Jd2eHyUBR-4Hxw7eUOwIhLwm7I",

@@ -1,5 +1,4 @@
-import { AES } from "https://cdn.skypack.dev/crypto-js";
-import { customAlphabet } from "https://cdn.skypack.dev/nanoid";
+import { AES, customAlphabet } from "../deps.ts";
 
 const genKey = () => {
   const alphabet =

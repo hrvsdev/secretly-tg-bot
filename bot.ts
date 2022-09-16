@@ -1,5 +1,5 @@
-import { Bot, session } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
-import { config } from "https://deno.land/x/dotenv@v1.0.1/mod.ts";
+import { Bot, session } from "./deps.ts";
+import { config } from "./deps.ts";
 
 import { getDocRef, saveSecret } from "./firebase/db.ts";
 import { getData, getReplyButtons } from "./static.ts";
@@ -12,14 +12,14 @@ import { type IEditMessage, type MyContext } from "./types.ts";
 config({ export: true });
 
 // Initialializing new bot
-const bot = new Bot<MyContext>(Deno.env.get("TOKEN") as string);
+export const bot = new Bot<MyContext>(Deno.env.get("TOKEN") || "");
 
 // Installing session middleware, and defining the initial session value.
 bot.use(session({ initial: () => ({ input: "" }) }));
 
 // Welcome message on start and help command
 bot.command(["start", "help", "env"], (ctx) =>
-ctx.reply(getWelcomeMsg(ctx.from?.first_name), msgOptions)
+  ctx.reply(getWelcomeMsg(ctx.from?.first_name), msgOptions)
 );
 
 // Handling when message is a 'URL'
@@ -48,7 +48,7 @@ bot.on("msg:text", async (ctx) => {
 bot.callbackQuery("text", async (ctx) => {
   const chatId = ctx.chat?.id as number;
   const msgId = ctx.msg?.message_id as number;
-  
+
   await ctx.answerCallbackQuery();
   sendMessage(ctx.session.input, "text", { chatId, msgId });
 });
@@ -57,7 +57,7 @@ bot.callbackQuery("text", async (ctx) => {
 bot.callbackQuery("redirect", async (ctx) => {
   const chatId = ctx.chat?.id as number;
   const msgId = ctx.msg?.message_id as number;
-  
+
   await ctx.answerCallbackQuery();
   sendMessage(addHttp(ctx.session.input), "redirect", { chatId, msgId });
 });
@@ -73,12 +73,10 @@ const sendMessage = (text: string, type: string, ids: IEditMessage) => {
 
   // Link of the secret
   const link = `Your one-time secret link: \n\n*https://st.hrvs.me/${docId}#${key}*`;
-  
+
   // Editing the original message to avoid clutter and duplicate clicking
   bot.api.editMessageText(ids.chatId, ids.msgId, link, msgOptions);
-  
+
   // Saving the secret to database
   saveSecret(getData(text, key, type), doc);
 };
-
-export default bot;

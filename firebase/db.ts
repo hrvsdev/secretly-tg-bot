@@ -1,8 +1,4 @@
-import { getFirestore } from "https://cdn.skypack.dev/firebase/firestore/lite";
-import { collection } from "https://cdn.skypack.dev/firebase/firestore/lite";
-import { doc, setDoc } from "https://cdn.skypack.dev/firebase/firestore/lite";
-import { type DocumentReference } from "https://cdn.skypack.dev/firebase/firestore/lite";
-
+import { collection, doc, DocumentReference, getFirestore, setDoc } from "../deps.ts";
 import app from "./config.ts";
 
 // Initializing firestore db
