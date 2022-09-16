@@ -1,5 +1,4 @@
 import { Bot, session } from "./deps.ts";
-import { config } from "./deps.ts";
 
 import { getDocRef, saveSecret } from "./firebase/db.ts";
 import { getData, getReplyButtons } from "./static.ts";
@@ -7,9 +6,6 @@ import { getWelcomeMsg, msgOptions } from "./static.ts";
 import { addHttp, genKey } from "./utils/utils.ts";
 
 import { type IEditMessage, type MyContext } from "./types.ts";
-
-// Env variable setup
-config({ export: true });
 
 // Initialializing new bot
 export const bot = new Bot<MyContext>(Deno.env.get("TOKEN") || "");
