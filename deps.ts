@@ -8,7 +8,7 @@ export type { SessionFlavor } from "https://deno.land/x/grammy@v1.11.0/mod.ts";
 export { initializeApp } from "https://cdn.skypack.dev/firebase/app";
 export { getFirestore } from "https://cdn.skypack.dev/firebase/firestore/lite";
 export { collection } from "https://cdn.skypack.dev/firebase/firestore/lite";
-export { doc, addDoc } from "https://cdn.skypack.dev/firebase/firestore/lite";
+export { doc, setDoc } from "https://cdn.skypack.dev/firebase/firestore/lite";
 
 // CryptoJS
 export { AES } from "https://cdn.skypack.dev/crypto-js";
