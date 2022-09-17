@@ -36,7 +36,7 @@ bot.on("msg:text", async (ctx) => {
     ctx.session.input = msg;
     ctx.session.q = q.message_id;
   } else {
-    const replyText = "Sending you your secret ...";
+    const replyText = "Sending you secret link...";
     const reply = await ctx.reply(replyText);
     sendSecret(msg, "text", { chatId, msgId: reply.message_id });
   }
@@ -125,13 +125,13 @@ const genDocAndLink = () => {
   const link = `https://st.hrvs.me/${docId}#${key}`;
 
   // Message for the secret
-  const msg = `Your one-time secret link: \n\n*${link}*`;
+  const msg = `Your one-time secret link: \n\n${link}`;
 
   return { docId, key, link, msg };
 };
 
 // Session expired message
 const sendSessionExpired = (chatId: number, msgId: number) => {
-  const text = `Session expired! \nPlease, try again.`;
+  const text = `Session expired ❌ \nPlease, send again 🔁`;
   bot.api.editMessageText(chatId, msgId, text, msgOptions);
 };
