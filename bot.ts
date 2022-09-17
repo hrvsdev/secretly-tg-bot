@@ -1,6 +1,6 @@
 import { Bot, isUrl, session } from "./deps.ts";
 
-import { getDocRef, saveSecret } from "./firebase/db.ts";
+import { getDocId, saveSecret } from "./firebase/db.ts";
 import { getData, getReplyButtons } from "./static.ts";
 import { getWelcomeMsg, msgOptions } from "./static.ts";
 import { addHttp, genKey } from "./utils/utils.ts";
@@ -64,17 +64,19 @@ bot.callbackQuery("redirect", async (ctx) => {
 
 // Handling inline query
 bot.on("inline_query", async (ctx) => {
-  // Query text
-  // const query = ctx.inlineQuery.query;
+  if (!ctx.inlineQuery.query) return;
 
   // Generating document data and link
-  const { link, msg } = genDocAndLink();
+  const { docId, key, link, msg } = genDocAndLink();
+
+  // Generating result id
+  const resultId = `${docId}#${key}`;
 
   // Answering inline query
   await ctx.answerInlineQuery([
     {
       type: "article",
-      id: "1",
+      id: resultId,
       title: "Click to send secret",
       description: link,
       input_message_content: {
@@ -83,32 +85,38 @@ bot.on("inline_query", async (ctx) => {
       },
     },
   ]);
-
-  // Saving the secret to database
-  // saveSecret(getData(query, key), doc);
 });
 
+// Saving database after user choose the result
 bot.on("chosen_inline_result", (ctx) => {
-  console.log(ctx.chosenInlineResult);
+  // Getting result data
+  const query = ctx.chosenInlineResult.query;
+  const resultIdArray = ctx.chosenInlineResult.result_id.split("#");
+
+  // Getting doc id and key from result id
+  const docId = resultIdArray[0];
+  const key = resultIdArray[1];
+
+  // Saving the secret to database
+  saveSecret(getData(query, key), docId);
 });
 
 // Send message method
 const sendSecret = (text: string, type: string, ids: IEditMessage) => {
   // Generating document data and link
-  const { doc, key, msg } = genDocAndLink();
+  const { docId, key, msg } = genDocAndLink();
 
   // Editing the original message to avoid clutter and duplicate clicking
   bot.api.editMessageText(ids.chatId, ids.msgId, msg, msgOptions);
 
   // Saving the secret to database
-  saveSecret(getData(text, key, type), doc);
+  saveSecret(getData(text, key, type), docId);
 };
 
 // Generating random link for saving data
 const genDocAndLink = () => {
-  // Getting document and its id to save data
-  const doc = getDocRef();
-  const docId = doc.id;
+  // Getting doc id to save data
+  const docId = getDocId();
 
   // Generating a random key to encrypt
   const key = genKey();
@@ -119,7 +127,7 @@ const genDocAndLink = () => {
   // Message for the secret
   const msg = `Your one-time secret link: \n\n*${link}*`;
 
-  return { doc, key, link, msg };
+  return { docId, key, link, msg };
 };
 
 // Session expired message

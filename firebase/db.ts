@@ -1,4 +1,4 @@
-import { collection, doc, DocumentReference, getFirestore, setDoc } from "../deps.ts";
+import { collection, doc, getFirestore, addDoc } from "../deps.ts";
 import app from "./config.ts";
 
 // Initializing firestore db
@@ -8,12 +8,12 @@ const db = getFirestore(app);
 const secretsRef = collection(db, "secrets");
 
 // Getting doc
-const getDocRef = () => doc(secretsRef);
+const getDocId = (): string => doc(secretsRef).id;
 
 // Saving secret
-const saveSecret = async (data: string, doc: DocumentReference) => {
+const saveSecret = async (data: string, docId: string) => {
   try {
-    await setDoc(doc, { data: data });
+    await addDoc(docId, { data: data });
     return { success: true };
   } catch (err) {
     console.log(err);
@@ -21,4 +21,4 @@ const saveSecret = async (data: string, doc: DocumentReference) => {
   }
 };
 
-export { saveSecret, getDocRef };
+export { saveSecret, getDocId };
