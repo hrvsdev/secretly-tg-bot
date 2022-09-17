@@ -132,6 +132,6 @@ const genDocAndLink = () => {
 
 // Session expired message
 const sendSessionExpired = (chatId: number, msgId: number) => {
-  const text = `Session expired ❌ \nPlease, send again 🔁`;
+  const text = `The session has expired. \n*Please resend.*`;
   bot.api.editMessageText(chatId, msgId, text, msgOptions);
 };
