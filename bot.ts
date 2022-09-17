@@ -84,10 +84,12 @@ bot.on("inline_query", async (ctx) => {
     },
   ]);
 
-  console.log(ctx.chosenInlineResult);
-
   // Saving the secret to database
   // saveSecret(getData(query, key), doc);
+});
+
+bot.on("chosen_inline_result", () => {
+  console.log("lust");
 });
 
 // Send message method
