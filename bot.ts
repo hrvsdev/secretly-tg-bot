@@ -88,8 +88,8 @@ bot.on("inline_query", async (ctx) => {
   // saveSecret(getData(query, key), doc);
 });
 
-bot.on("chosen_inline_result", () => {
-  console.log("lust");
+bot.on("chosen_inline_result", (ctx) => {
+  console.log(ctx.chosenInlineResult);
 });
 
 // Send message method
